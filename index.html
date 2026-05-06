@@ -373,6 +373,7 @@ Score: <span id="score">0</span>
   <img id="lightboxImg">
 </div>
 
+
 <script>
 /* HEARTS */
 function createHeart() {
@@ -408,128 +409,123 @@ function closeImg() {
 }
 
   
-/* START LOOP */
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+window.onload = function () {
 
-let gameStarted = false;
+  /* ================= GAME ================= */
 
-let birdY = 200;
-let velocity = 0;
-let gravity = 0.5;
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
 
-let pipes = [];
-let score = 0;
+  let gameStarted = false;
+  let birdY = 200;
+  let velocity = 0;
+  let gravity = 0.5;
+  let pipes = [];
+  let score = 0;
 
-/* IMPORTANT: force visible state */
-function resetGameState() {
-  birdY = 200;
-  velocity = 0;
-  pipes = [];
-  score = 0;
-  document.getElementById("score").innerText = 0;
-}
+  const startBtn = document.getElementById("startBtn");
 
-/* START BUTTON */
-document.getElementById("startBtn").addEventListener("click", function () {
-  gameStarted = true;
-  resetGameState();
-});
+  if (startBtn) {
+    startBtn.onclick = function (e) {
+      e.preventDefault();
+      gameStarted = true;
 
-/* DRAW HEART */
-function drawBird() {
-  ctx.font = "24px Arial";
-  ctx.fillText("💖", 50, birdY);
-}
+      birdY = 200;
+      velocity = 0;
+      pipes = [];
+      score = 0;
 
-/* CREATE PIPE */
-function createPipe() {
-  if (!gameStarted) return;
+      document.getElementById("score").innerText = 0;
+      console.log("Game started 💖");
+    };
+  }
 
-  const gap = 120;
-  const topHeight = Math.random() * 200 + 60;
+  function drawBird() {
+    ctx.font = "24px Arial";
+    ctx.fillText("💖", 50, birdY);
+  }
 
-  pipes.push({
-    x: 320,
-    top: topHeight,
-    bottom: topHeight + gap,
-    passed: false
+  function createPipe() {
+    if (!gameStarted) return;
+
+    const gap = 120;
+    const topHeight = Math.random() * 200 + 60;
+
+    pipes.push({
+      x: 320,
+      top: topHeight,
+      bottom: topHeight + gap,
+      passed: false
+    });
+  }
+
+  function drawPipes() {
+    ctx.fillStyle = "rgba(255,105,180,0.6)";
+
+    for (let p of pipes) {
+      p.x -= 2;
+
+      ctx.fillRect(p.x, 0, 40, p.top);
+      ctx.fillRect(p.x, p.bottom, 40, 480);
+
+      if (
+        p.x < 80 &&
+        p.x > 30 &&
+        (birdY < p.top || birdY > p.bottom)
+      ) {
+        gameStarted = false;
+        alert("Game Over 💔");
+      }
+
+      if (!p.passed && p.x + 40 < 50) {
+        score++;
+        p.passed = true;
+        document.getElementById("score").innerText = score;
+      }
+    }
+
+    pipes = pipes.filter(p => p.x > -60);
+  }
+
+  function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (!gameStarted) {
+      ctx.fillStyle = "white";
+      ctx.font = "16px Arial";
+      ctx.fillText("Press START to play 💕", 70, 240);
+    } else {
+      velocity += gravity;
+      birdY += velocity;
+
+      drawPipes();
+    }
+
+    drawBird();
+    requestAnimationFrame(update);
+  }
+
+  document.addEventListener("keydown", () => {
+    if (gameStarted) velocity = -7;
   });
-}
 
-/* DRAW PIPES */
-function drawPipes() {
-  ctx.fillStyle = "rgba(255,105,180,0.6)";
+  setInterval(createPipe, 2000);
+  update();
 
-  for (let i = 0; i < pipes.length; i++) {
-    let p = pipes[i];
-    p.x -= 2;
+  /* ================= MOVIE BUTTON ================= */
 
-    ctx.fillRect(p.x, 0, 40, p.top);
-    ctx.fillRect(p.x, p.bottom, 40, 480);
+  const playBtn = document.querySelector(".play-overlay");
+  const iframe = document.getElementById("driveVideo");
 
-    // collision
-    if (
-      p.x < 80 &&
-      p.x > 30 &&
-      (birdY < p.top || birdY > p.bottom)
-    ) {
-      gameStarted = false;
-      alert("Game Over 💔 Press Start again");
-    }
-
-    // score fix
-    if (!p.passed && p.x + 40 < 50) {
-      score++;
-      p.passed = true;
-      document.getElementById("score").innerText = score;
-    }
+  if (playBtn && iframe) {
+    playBtn.onclick = function () {
+      iframe.src = iframe.src;
+      playBtn.style.display = "none";
+      console.log("Movie playing 🎬");
+    };
   }
 
-  pipes = pipes.filter(p => p.x > -50);
-}
-
-/* MAIN LOOP */
-function update() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (!gameStarted) {
-    ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
-    ctx.fillText("Press START to play 💕", 70, 240);
-  } else {
-    velocity += gravity;
-    birdY += velocity;
-
-    if (birdY > 460 || birdY < 0) {
-      gameStarted = false;
-      alert("Game Over 💔");
-    }
-
-    drawPipes();
-  }
-
-  drawBird();
-  requestAnimationFrame(update);
-}
-
-/* CONTROLS */
-document.addEventListener("keydown", () => {
-  if (gameStarted) velocity = -7;
-});
-
-document.addEventListener("click", () => {
-  if (gameStarted) velocity = -7;
-});
-
-/* PIPE SPAWN */
-setInterval(() => {
-  createPipe();
-}, 2000);
-
-/* START LOOP */
-update();
- 
+};
 
 </body>
 </html>
