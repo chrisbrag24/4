@@ -16,6 +16,15 @@ body {
   animation: fadeIn 2s ease;
 }
 
+  #gameCanvas {
+  background: radial-gradient(circle at top, #1a1a2e, #000);
+  border: 1px solid rgba(255,192,203,0.3);
+  border-radius: 15px;
+  display: block;
+  margin: 20px auto;
+  box-shadow: 0 0 25px rgba(255,192,203,0.2);
+}
+
 /* CINEMATIC VIGNETTE */
 body::after {
   content: "";
@@ -270,7 +279,15 @@ h1 {
   </div>
 
 </div>
+  
+ <h2>Mini Game - Hit 48 = Clue </h2>
 
+<canvas id="gameCanvas" width="320" height="480"></canvas>
+
+<div style="margin-top:10px; color:pink;">
+Score: <span id="score">0</span>
+</div>
+  
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeImg()">
   <img id="lightboxImg">
@@ -309,7 +326,100 @@ function openImg(img) {
 function closeImg() {
   document.getElementById("lightbox").style.display = "none";
 }
+
+  const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let birdY = 200;
+let velocity = 0;
+let gravity = 0.5;
+let score = 0;
+
+let pipes = [];
+
+function drawBird() {
+  ctx.font = "24px Arial";
+  ctx.fillText("💖", 50, birdY);
+}
+
+function createPipe() {
+  let gap = 120;
+  let topHeight = Math.random() * 200 + 50;
+
+  pipes.push({
+    x: 320,
+    top: topHeight,
+    bottom: topHeight + gap
+  });
+}
+
+function drawPipes() {
+  ctx.fillStyle = "rgba(255,105,180,0.6)";
+
+  pipes.forEach(pipe => {
+    ctx.fillRect(pipe.x, 0, 40, pipe.top);
+    ctx.fillRect(pipe.x, pipe.bottom, 40, 480);
+    pipe.x -= 2;
+
+    // collision
+    if (
+      pipe.x < 70 &&
+      pipe.x > 30 &&
+      (birdY < pipe.top || birdY > pipe.bottom)
+    ) {
+      resetGame();
+    }
+
+    // score
+    if (pipe.x === 40) {
+      score++;
+      document.getElementById("score").innerText = score;
+    }
+  });
+
+  pipes = pipes.filter(p => p.x > -50);
+}
+
+function resetGame() {
+  alert("Game Over 💔 Try again my love");
+  birdY = 200;
+  velocity = 0;
+  pipes = [];
+  score = 0;
+  document.getElementById("score").innerText = 0;
+}
+
+function update() {
+  velocity += gravity;
+  birdY += velocity;
+
+  if (birdY > 460 || birdY < 0) {
+    resetGame();
+  }
+
+  ctx.clearRect(0, 0, 320, 480);
+
+  drawBird();
+  drawPipes();
+
+  requestAnimationFrame(update);
+}
+
+setInterval(createPipe, 2000);
+
+document.addEventListener("keydown", function () {
+  velocity = -7;
+});
+
+document.addEventListener("click", function () {
+  velocity = -7;
+});
+
+update();
+  
 </script>
+
+ 
 
 </body>
 </html>
