@@ -105,8 +105,7 @@ body::before {
   left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 999999; /* VERY IMPORTANT */
-}
+
   width: 150px;
   padding: 12px;
 
@@ -115,10 +114,11 @@ body::before {
   border-radius: 15px;
 
   backdrop-filter: blur(10px);
-  z-index: 9999;
 
   text-align: center;
   color: white;
+
+  z-index: 1000000;
 }
 
 .music-title {
@@ -167,9 +167,6 @@ body::before {
 .music-widget button:hover {
   background: pink;
   color: black;
-}
-    .music-widget {
-  z-index: 100000 !important;
 }
     
 .intro h1 {
