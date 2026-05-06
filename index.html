@@ -665,20 +665,22 @@ function unlockAudio() {
 document.addEventListener("click", unlockAudio, { once: true });
 
 function selectSong(file, btn) {
+  audio.pause();
   audio.src = file;
   audio.load();
 
-  audio.play().then(() => {
-    isPlaying = true;
-    playPauseBtn.innerText = "Pause ⏸";
-    nowPlaying.innerText = "Now Playing 🎧";
+  audio.oncanplaythrough = () => {
+    audio.play().then(() => {
+      playPauseBtn.innerText = "Pause ⏸";
+      nowPlaying.innerText = "Now Playing 🎧";
 
-    if (currentButton) currentButton.classList.remove("active");
-    btn.classList.add("active");
-    currentButton = btn;
-  }).catch(err => {
-    console.log("Play blocked:", err);
-  });
+      if (currentButton) currentButton.classList.remove("active");
+      btn.classList.add("active");
+      currentButton = btn;
+    }).catch(err => {
+      console.log("Play failed:", err);
+    });
+  };
 }
 
 function togglePlay() {
