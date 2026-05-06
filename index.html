@@ -380,10 +380,10 @@ h1 {
 
   <div id="nowPlaying">Not playing</div>
 
-<button onclick="selectSong('./song1.mp3', this)">Song 1</button>
-<button onclick="selectSong('./song2.mp3', this)">Song 2</button>
-<button onclick="selectSong('./song3.mp3', this)">Song 3</button>
-<button onclick="selectSong('./song4.mp3', this)">Song 4</button>
+<button onclick="selectSong('song1.mp3', this)">Song 1</button>
+<button onclick="selectSong('song2.mp3', this)">Song 2</button>
+<button onclick="selectSong('song3.mp3', this)">Song 3</button>
+<button onclick="selectSong('song4.mp3', this)">Song 4</button>
 
   <button onclick="togglePlay()" id="playPauseBtn">Play ⏸</button>
 
@@ -635,34 +635,56 @@ function draw() {
 setInterval(createPipe, 2000);
 draw();
   
-function selectSong(file, btn) {
-  const audio = document.getElementById("audioPlayer");
+const audio = document.getElementById("audioPlayer");
+const nowPlaying = document.getElementById("nowPlaying");
+const playPauseBtn = document.getElementById("playPauseBtn");
 
-  audio.pause();
-  audio.currentTime = 0;
+let currentButton = null;
+let isPlaying = false;
 
-  audio.src = file;
-  audio.load(); // IMPORTANT FIX
-
-  const playPromise = audio.play();
-
-  if (playPromise !== undefined) {
-    playPromise.catch(err => {
-      console.log("Audio blocked or not found:", err);
-    });
-  }
-
-  isPlaying = true;
-  playPauseBtn.innerText = "Pause ⏸";
-
-  nowPlaying.innerText = "Now Playing 🎧";
-
-  document.querySelectorAll(".music-widget button").forEach(b => {
-    if (b !== playPauseBtn) b.classList.remove("active");
-  });
-
-  btn.classList.add("active");
+// 🔥 IMPORTANT: unlock audio on first interaction
+function unlockAudio() {
+  audio.play().then(() => {
+    audio.pause();
+    audio.currentTime = 0;
+  }).catch(() => {});
+  document.removeEventListener("click", unlockAudio);
 }
+
+document.addEventListener("click", unlockAudio, { once: true });
+
+function selectSong(file, btn) {
+  audio.src = file;
+  audio.load();
+
+  audio.play().then(() => {
+    isPlaying = true;
+    playPauseBtn.innerText = "Pause ⏸";
+    nowPlaying.innerText = "Now Playing 🎧";
+
+    if (currentButton) currentButton.classList.remove("active");
+    btn.classList.add("active");
+    currentButton = btn;
+  }).catch(err => {
+    console.log("Play blocked:", err);
+  });
+}
+
+function togglePlay() {
+  if (!audio.src) return;
+
+  if (audio.paused) {
+    audio.play();
+    playPauseBtn.innerText = "Pause ⏸";
+  } else {
+    audio.pause();
+    playPauseBtn.innerText = "Play ▶️";
+  }
+}
+
+audio.onended = () => {
+  playPauseBtn.innerText = "Play ▶️";
+};
 };
 
   </script>
