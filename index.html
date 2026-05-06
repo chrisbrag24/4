@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy 4th Anniversary ❤️</title>
 
-<style>
+  <style>
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
@@ -13,9 +13,12 @@ body {
   text-align: center;
   overflow-x: hidden;
   position: relative;
+
+  /* fallback color (IMPORTANT) */
+  background: #0b0b14;
 }
 
-/* 🌸 BLURRED BACKGROUND IMAGE */
+/* BACKGROUND IMAGE */
 body::before {
   content: "";
   position: fixed;
@@ -23,13 +26,17 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
+
+  /* IMPORTANT: make sure file name is EXACT */
   background: url("pic7.jpeg") center/cover no-repeat;
-  filter: blur(18px) brightness(0.5);
+
+  filter: blur(18px) brightness(0.4);
   transform: scale(1.1);
+
   z-index: -2;
 }
 
-/* DARK OVERLAY */
+/* DARK OVERLAY FOR READABILITY */
 body::after {
   content: "";
   position: fixed;
@@ -37,7 +44,9 @@ body::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.35);
+
+  background: rgba(0,0,0,0.45);
+
   z-index: -1;
 }
 
