@@ -282,12 +282,20 @@ h1 {
   
  <h2>Mini Game - Hit 48 = Clue </h2>
 
+<div style="text-align:center;">
+  <button id="startBtn" class="btn">Start Game 💕</button>
+</div>
+
 <canvas id="gameCanvas" width="320" height="480"></canvas>
 
 <div style="margin-top:10px; color:pink;">
 Score: <span id="score">0</span>
 </div>
   
+  #startBtn {
+  margin-bottom: 10px;
+}
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeImg()">
   <img id="lightboxImg">
@@ -334,15 +342,30 @@ let birdY = 200;
 let velocity = 0;
 let gravity = 0.5;
 let score = 0;
+let gameStarted = false;
 
 let pipes = [];
 
+/* START BUTTON */
+document.getElementById("startBtn").addEventListener("click", () => {
+  gameStarted = true;
+  birdY = 200;
+  velocity = 0;
+  pipes = [];
+  score = 0;
+  document.getElementById("score").innerText = 0;
+});
+
+/* BIRD */
 function drawBird() {
   ctx.font = "24px Arial";
   ctx.fillText("💖", 50, birdY);
 }
 
+/* PIPES */
 function createPipe() {
+  if (!gameStarted) return;
+
   let gap = 120;
   let topHeight = Math.random() * 200 + 50;
 
@@ -357,9 +380,10 @@ function drawPipes() {
   ctx.fillStyle = "rgba(255,105,180,0.6)";
 
   pipes.forEach(pipe => {
+    pipe.x -= 2;
+
     ctx.fillRect(pipe.x, 0, 40, pipe.top);
     ctx.fillRect(pipe.x, pipe.bottom, 40, 480);
-    pipe.x -= 2;
 
     // collision
     if (
@@ -380,44 +404,49 @@ function drawPipes() {
   pipes = pipes.filter(p => p.x > -50);
 }
 
+/* RESET */
 function resetGame() {
-  alert("Game Over 💔 Try again my love");
-  birdY = 200;
-  velocity = 0;
-  pipes = [];
-  score = 0;
-  document.getElementById("score").innerText = 0;
+  gameStarted = false;
+  alert("Game Over 💔 Tap Start to try again");
 }
 
+/* GAME LOOP */
 function update() {
-  velocity += gravity;
-  birdY += velocity;
-
-  if (birdY > 460 || birdY < 0) {
-    resetGame();
-  }
-
   ctx.clearRect(0, 0, 320, 480);
 
-  drawBird();
-  drawPipes();
+  if (gameStarted) {
+    velocity += gravity;
+    birdY += velocity;
 
+    if (birdY > 460 || birdY < 0) {
+      resetGame();
+    }
+
+    drawPipes();
+  } else {
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
+    ctx.fillText("Press Start to Play 💕", 70, 240);
+  }
+
+  drawBird();
   requestAnimationFrame(update);
 }
 
+/* CONTROLS */
+document.addEventListener("keydown", () => {
+  if (gameStarted) velocity = -7;
+});
+
+document.addEventListener("click", () => {
+  if (gameStarted) velocity = -7;
+});
+
+/* PIPE SPAWN */
 setInterval(createPipe, 2000);
 
-document.addEventListener("keydown", function () {
-  velocity = -7;
-});
-
-document.addEventListener("click", function () {
-  velocity = -7;
-});
-
+/* START LOOP */
 update();
-  
-</script>
 
  
 
