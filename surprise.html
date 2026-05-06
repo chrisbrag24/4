@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hidden Surprise 💖</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top, #0b0b14, #000);
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+  text-align: center;
+}
+
+.box {
+  max-width: 500px;
+  padding: 20px;
+}
+
+h1 {
+  color: pink;
+  text-shadow: 0 0 15px pink;
+}
+
+input {
+  padding: 12px;
+  width: 80%;
+  border-radius: 10px;
+  border: none;
+  text-align: center;
+  font-size: 1em;
+  margin-top: 20px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: 1px solid pink;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: pink;
+  color: black;
+}
+
+.result {
+  margin-top: 20px;
+  font-size: 1.2em;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h1>Hidden Memory Game 💖</h1>
+
+  <p>
+    I gave you a clue earlier…<br>
+    Something worn when someone is treated like royalty 👑<br><br>
+    Can you guess the word?
+  </p>
+
+  <input type="text" id="guess" placeholder="Type your answer here...">
+  <br>
+  <button onclick="check()">Submit</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+function check() {
+  const answer = document.getElementById("guess").value.toLowerCase().trim();
+  const result = document.getElementById("result");
+
+  if (answer === "crown") {
+    result.innerHTML = "💖 Correct… you found it. You are my queen 👑";
+  } else {
+    result.innerHTML = "Not quite… think about royalty 👀";
+  }
+}
+</script>
+
+</body>
+</html>
