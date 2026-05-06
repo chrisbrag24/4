@@ -625,7 +625,6 @@ function preloadSongs() {
   });
 }
   
-window.onload = function () {
 
   /* ================= GAME ================= */
 
@@ -803,12 +802,12 @@ audio.onended = () => nextSong();
 window.addEventListener("load", () => {
   preloadSongs();
 
-  setTimeout(() => {
-    const widget = document.querySelector(".music-widget");
-    if (widget) widget.classList.add("show");
-  }, 2500);
-
-  
+  const widget = document.querySelector(".music-widget");
+  if (widget) {
+    setTimeout(() => {
+      widget.classList.add("show");
+    }, 2000);
+  }
 });
   </script>
 </body>
