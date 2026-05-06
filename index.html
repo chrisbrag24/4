@@ -36,6 +36,21 @@ body::before {
   z-index: -2;
 }
 
+    <div class="music-widget">
+  <div class="music-title">Music 💖</div>
+
+  <div id="nowPlaying">Not playing</div>
+
+  <button onclick="selectSong('song1.mp3', this)">Song 1</button>
+  <button onclick="selectSong('song2.mp3', this)">Song 2</button>
+  <button onclick="selectSong('song3.mp3', this)">Song 3</button>
+  <button onclick="selectSong('song4.mp3', this)">Song 4</button>
+
+  <button onclick="togglePlay()" id="playPauseBtn">Play ⏸</button>
+
+  <audio id="audioPlayer"></audio>
+</div>
+    
 /* DARK OVERLAY FOR READABILITY */
 body::after {
   content: "";
@@ -97,7 +112,64 @@ body::before {
 .intro {
   pointer-events: none;
 }
-  
+  .music-widget {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 150px;
+  padding: 12px;
+
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,192,203,0.3);
+  border-radius: 15px;
+
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+
+  text-align: center;
+  color: white;
+}
+
+.music-title {
+  font-size: 14px;
+  color: pink;
+  margin-bottom: 10px;
+}
+.music-widget button.active {
+  background: pink;
+  color: black;
+  box-shadow: 0 0 15px pink;
+  transform: scale(1.05);
+}
+
+#nowPlaying {
+  font-size: 12px;
+  margin-bottom: 8px;
+  color: #f5c2d7;
+  min-height: 18px;
+  text-shadow: 0 0 10px rgba(255,192,203,0.5);
+}
+.music-widget button {
+  width: 100%;
+  margin: 5px 0;
+  padding: 6px;
+
+  border-radius: 10px;
+  border: 1px solid pink;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+
+  font-size: 12px;
+}
+
+.music-widget button:hover {
+  background: pink;
+  color: black;
+}
+    
 .intro h1 {
   font-size: 2em;
   letter-spacing: 2px;
@@ -556,6 +628,52 @@ function draw() {
 
 setInterval(createPipe, 2000);
 draw();
+  
+const audio = document.getElementById("audioPlayer");
+const nowPlaying = document.getElementById("nowPlaying");
+const playPauseBtn = document.getElementById("playPauseBtn");
+
+let currentButton = null;
+let isPlaying = false;
+
+function selectSong(file, btn) {
+  audio.src = file;
+  audio.play();
+
+  isPlaying = true;
+  playPauseBtn.innerText = "Pause ⏸";
+
+  nowPlaying.innerText = "Now Playing 🎧";
+
+  // remove old highlight
+  document.querySelectorAll(".music-widget button").forEach(b => {
+    if (b !== playPauseBtn) b.classList.remove("active");
+  });
+
+  // highlight current
+  btn.classList.add("active");
+  currentButton = btn;
+}
+
+function togglePlay() {
+  if (!audio.src) return;
+
+  if (isPlaying) {
+    audio.pause();
+    isPlaying = false;
+    playPauseBtn.innerText = "Play ▶️";
+  } else {
+    audio.play();
+    isPlaying = true;
+    playPauseBtn.innerText = "Pause ⏸";
+  }
+}
+
+// when song ends
+audio.onended = function () {
+  isPlaying = false;
+  playPauseBtn.innerText = "Play ▶️";
+};
 
 };
 
